@@ -17,6 +17,7 @@ links:
     website: https://dojo.tech/
     image: https://cdn.dojo.tech/payments/branding/logos/acc_wrr9HHrH10KHXtVxfWNPHw/file_y-_CuT9RLkKK2vvvLaGeUw/90395f2a-029e-4f23-afdb-258bdbb1002b.png
 license: false
+readingTime: false
 menu:
     main:
         weight: 2
