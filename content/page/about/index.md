@@ -12,6 +12,10 @@ links:
     description: Jeremy Barneron - Checkout my Github !
     website: https://github.com/amstee/
     image: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  - title: Dojo.tech
+    description: Jeremy Barneron - Checkout my Github !
+    website: https://dojo.tech/
+    image: https://cdn.dojo.tech/payments/branding/logos/acc_wrr9HHrH10KHXtVxfWNPHw/file_y-_CuT9RLkKK2vvvLaGeUw/90395f2a-029e-4f23-afdb-258bdbb1002b.png
 license: false
 menu:
     main:
@@ -21,9 +25,10 @@ menu:
 ---
 
 
-Software Engineer with a strong experience building scalable systems.
+Software Engineer with a strong experience building real time scalable systems and platforms.<br/>
+Proficient in utilising a variety of platforms, tools, and languages to deliver robust and scalable solutions.
 
-I like to solve complex problems around delivering real time systems in perpetual growth. <br/>Proficient in utilising a variety of platforms, tools, and languages to deliver robust and scalable solutions.
+I am currently working at [dojo.tech](https://dojo.tech/) developing our real time processing capabilities through Kafka and Flink.
 
 Some of the technologies I work with include:
 ```yaml
