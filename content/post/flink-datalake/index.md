@@ -5,6 +5,7 @@ layout: article
 categories:
   - flink
   - kafka
+  - lakehouse
 ---
 
 
