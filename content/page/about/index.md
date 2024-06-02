@@ -28,12 +28,10 @@ I like to solve complex problems around delivering real time systems in perpetua
 Some of the technologies I work with include:
 ```yaml
 Cloud: ["AWS", "GCP"]
-Tools: ["Docker", "gRPC", "Protobuf", "Avro"]
-CI/CD: ["Github Actions", "CircleCI", "ArgoCD"]
-Databases: ["PostgreSQL", "Spanner", "DynamoDB"]
+Tools: ["Docker", "gRPC", "Protobuf"]
 Streaming: ["Kafka", "Flink", "Debezium", "Kafka Connect"]
 Observability: ["Graphana", "Prometheus", "OpenTelemetry"]
-Infrastructure: ["Kubernetes", "Terraform", "Helm", "Kustomize"]
+Others: ["Kubernetes", "Terraform", "Kustomize"]
 ```
 
 And my favourite languages are:
