@@ -1,6 +1,6 @@
 ---
 title: "Build your own Data Lakehouse with Flink SQL"
-date: 2024-06-02
+date: 2024-09-21
 layout: article
 image: "lakehouse.jpg"
 categories:
@@ -13,11 +13,21 @@ tags:
   - Kubernetes
 ---
 
+In an increasingly data-centric landscape, having a unified data architecture is critical for modern data platforms. We see increasing demand for a flexible, scalable, and cost-effective solution to manage and analyze large volumes of diverse data.
+
+But not all architectures were designed to handle this. Traditional data lakes and warehouses often fall short in providing a seamless, efficient solution that can scale and adapt to the needs of businesses, especially in today's challenging economy. 
+
+How do you bridge the gap between them, and evolve your architecture into something more dynamic and future proof ?
+
+**Introducing -- The Data Lakehouse Architecture**
+
 ## Data Lakehouse
 
 ### What is a Data Lakehouse ?
 
 A data lakehouse is a modern data architecture that creates a single platform by combining the key benefits of data lakes (large repositories of raw data in its original form) and data warehouses (organized sets of structured data). Specifically, data lakehouses enable organizations to use low-cost storage to store large amounts of raw data while providing structure and data management functions. 
+
+![Lakehouse Overview](lakehouse.drawio.png)
 
 ### What features define a Data Lakehouse ?
 
@@ -44,11 +54,11 @@ The trend towards Lakehouse architectures in data management is driven by severa
 - Scalability: Lakehouse architectures can scale easily to accommodate growing data volumes and diverse analytical needs.
 - Flexibility: They allow companies to use a variety of tools and technologies for data processing and analysis.
 
-Now if you feel a bit overwhelmed at this point, don’t worry, getting started is a lot easier than you might think ✅
+If you feel a bit overwhelmed at this point, don’t worry, getting started is a lot easier than you might think ✅
 
 ## Tech Stack
 
-Now introduce the stars of our show: **Flink, Iceberg & Nessie**
+Let's introduce the stars of our show: **Flink, Iceberg & Nessie**
 
 ###  Flink
 
@@ -59,8 +69,6 @@ Now introduce the stars of our show: **Flink, Iceberg & Nessie**
 > 
 > Source: https://flink.apache.org/
 > 
-
-Now from that introduction it might not be yet super clear why Flink is a key component in building our Data Lakehouse.
 
 What you need to know:
 
@@ -102,7 +110,7 @@ Nessie is heavily inspired by Git. The main concepts Nessie exposes map directly
 
 I’m sure most of you are familiar with Git, and you know it is today the de-facto standard for version control. Having similar features on top of our Data lakehouse is incredibly powerful.
 
-## Getting started
+## Deployment
 
 **Pre-requisites:** 
 * Kubernetes Cluster [(ex: Minikube)](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download)
@@ -116,32 +124,32 @@ Now let’s get started:
 kubectl create ns flink-lakehouse && kubectl config set-context --current --namespace=flink-lakehouse
 ```
 
-## Nessie deployment
+### Nessie
 
-### Setup
+#### Setup
 
 ```bash
 helm repo add nessie-helm https://charts.projectnessie.org
 helm repo update
 ```
 
-### Deployment
+#### Deployment
 
 ```bash
 helm install nessie -n flink-lakehouse helm/nessie
 ```
 
 
-## Flink deployment
+### Flink
 
-### Flink Operator Installation
+#### Operator Installation
 
 ```jsx
 helm repo add flink-operator-repo https://downloads.apache.org/flink/flink-kubernetes-operator-<OPERATOR-VERSION>/
 helm install flink-kubernetes-operator flink-operator-repo/flink-kubernetes-operator
 ```
 
-### Let’s create our Flink docker image
+#### Docker image
 
 As I said earlier Flink is designed to be extended, and this is done by making the required JAR available to Flink.
 
@@ -241,7 +249,7 @@ ENTRYPOINT ["/flink-hadoop-entrypoint.sh"]
 ```
 </details>
 
-### Deploy our Flink cluster
+#### Deploy our Flink cluster
 
 <details>
   <summary> gcp-credentials.yaml </summary>
@@ -283,7 +291,7 @@ kind: FlinkDeployment
 metadata:
   name: dsp-flink
 spec:
-  image: TODO
+  image: ${OUR_FLINK_DOCKER_IMAGE}
   flinkVersion: v1_17
   mode: standalone
   flinkConfiguration:
@@ -352,7 +360,7 @@ Let’s try this out, first we need some data:
 
 ### Dataset
 
-Let’s use New York’s taxi trip data: https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+Let’s use [New York’s taxi trip data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
 
 Download one of those files and add it to your GCS bucket in a `nyc/` folder.
 
@@ -470,18 +478,14 @@ select count(*) FROM nessie.nycdataset.TaxiTrips;
 
 ## Conclusion
 
-Building your own Data Lakehouse with Flink SQL, Iceberg, and Nessie is not only possible but also relatively straightforward. This modern data architecture combines the best of data lakes and data warehouses, offering a flexible, scalable, and cost-effective solution for managing and analyzing large volumes of diverse data.
+With Apache Flink's powerful connector capabilities, Apache Iceberg's high-performance table format, and Nessie's version control features, we've created a robust foundation for a Data Lakehouse.
+The lakehouse architecture combines the best of data lakes and data warehouses, offering a flexible, scalable, and cost-effective solution for managing and analyzing large volumes of diverse data.
 
-By leveraging Apache Flink's powerful stream processing capabilities, Apache Iceberg's high-performance table format, and Nessie's version control features, we've created a robust foundation for a Data Lakehouse. This setup allows for efficient data ingestion, processing, and analysis while maintaining data consistency and enabling advanced features like schema evolution and time travel.
+With a few minutes, we've layed foundation do an architecture that will scale as data volumes continue to grow and analytical needs become more complex.
 
-Our step-by-step guide demonstrated how to deploy these components on Kubernetes, integrate with cloud storage (GCS in this case), and perform basic data operations. We showed how to query raw Parquet files and transform them into an Iceberg table, showcasing the seamless transition from traditional data formats to a Lakehouse structure.
-
-This approach opens up numerous possibilities for organizations looking to modernize their data infrastructure. It enables real-time analytics, supports machine learning workflows, and provides a unified platform for various data types and workloads. As data volumes continue to grow and analytical needs become more complex, the Data Lakehouse architecture implemented here offers a scalable and adaptable solution.
-
-By mastering these tools and concepts, data engineers and analysts can build powerful, flexible data platforms that meet the evolving needs of modern data-driven organizations. The journey to building your own Data Lakehouse may seem daunting at first, but with the right tools and approach, it's an achievable and rewarding endeavor that can transform how your organization manages and leverages its data assets.
 
 ## Coming Next
 
 - Proto Confluent format for Flink
-- Flink BigQuery source connector using Storage Read API
-    - BQ users can read up to 300 TiB of data per month at no charge.
+- BigQuery "CDC" with Flink
+- Flink HTTP Source connector
