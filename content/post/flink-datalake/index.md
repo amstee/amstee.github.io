@@ -4,8 +4,9 @@ date: 2024-09-21
 layout: article
 image: "lakehouse.jpg"
 categories:
-  - flink
-  - kubernertes
+  - Flink
+  - Kubernetes
+  - Iceberg
 tags:
   - Lakehouse
   - Flink
@@ -45,14 +46,14 @@ The key data lakehouse features include:
 
 The trend towards Lakehouse architectures in data management is driven by several key factors:
 
-- Data variety: Companies now deal with structured, semi-structured, and unstructured data. Lakehouses can handle all these data types efficiently.
-- Cost-effectiveness: Lakehouses combine the low-cost storage of data lakes with the powerful querying capabilities of data warehouses, offering a more economical solution.
-- Data silos elimination: Lakehouses help break down data silos by providing a unified platform for all data types and analytics workloads.
-- Real-time analytics: Lakehouse architectures support both batch and real-time data processing, enabling faster insights.
-- Machine learning integration: Lakehouses provide strong support for machine learning workflows, allowing data scientists to work directly with raw data.
-- Data governance: Lakehouses offer improved data governance and security features compared to traditional data lakes.
-- Scalability: Lakehouse architectures can scale easily to accommodate growing data volumes and diverse analytical needs.
-- Flexibility: They allow companies to use a variety of tools and technologies for data processing and analysis.
+- **Data variety**: Companies now deal with structured, semi-structured, and unstructured data. Lakehouses can handle all these data types efficiently.
+- **Cost-effectiveness**: Lakehouses combine the low-cost storage of data lakes with the powerful querying capabilities of data warehouses, offering a more economical solution.
+- **Data silos elimination**: Lakehouses help break down data silos by providing a unified platform for all data types and analytics workloads.
+- **Real-time analytics**: Lakehouse architectures support both batch and real-time data processing, enabling faster insights.
+- **Machine learning integration**: Lakehouses provide strong support for machine learning workflows, allowing data scientists to work directly with raw data.
+- **Data governance**: Lakehouses offer improved data governance and security features compared to traditional data lakes.
+- **Scalability**: Lakehouse architectures can scale easily to accommodate growing data volumes and diverse analytical needs.
+- **Flexibility**: They allow companies to use a variety of tools and technologies for data processing and analysis.
 
 If you feel a bit overwhelmed at this point, don’t worry, getting started is a lot easier than you might think ✅
 
