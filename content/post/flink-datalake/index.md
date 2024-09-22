@@ -1,5 +1,5 @@
 ---
-title: "Build your own Data Lakehouse with Flink SQL"
+title: "Data Lakehouse Architecture with Flink SQL"
 date: 2024-09-21
 layout: article
 image: "lakehouse.jpg"
