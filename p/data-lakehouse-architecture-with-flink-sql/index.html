@@ -1,0 +1,444 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="In an increasingly data-centric landscape, having a unified data architecture is critical for modern data platforms. We see increasing demand for a flexible, scalable, and cost-effective solution to manage and analyze large volumes of diverse data.\nBut not all architectures were designed to handle this. Traditional data lakes and warehouses often fall short in providing a seamless, efficient solution that can scale and adapt to the needs of businesses, especially in today&rsquo;s challenging economy.\n"><title>Data Lakehouse Architecture with Flink SQL</title>
+<link rel=canonical href=https://amstee.github.io/p/data-lakehouse-architecture-with-flink-sql/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="Data Lakehouse Architecture with Flink SQL"><meta property='og:description' content="In an increasingly data-centric landscape, having a unified data architecture is critical for modern data platforms. We see increasing demand for a flexible, scalable, and cost-effective solution to manage and analyze large volumes of diverse data.\nBut not all architectures were designed to handle this. Traditional data lakes and warehouses often fall short in providing a seamless, efficient solution that can scale and adapt to the needs of businesses, especially in today&rsquo;s challenging economy.\n"><meta property='og:url' content='https://amstee.github.io/p/data-lakehouse-architecture-with-flink-sql/'><meta property='og:site_name' content='Jeremy Barneron'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Lakehouse'><meta property='article:tag' content='Flink'><meta property='article:tag' content='Iceberg'><meta property='article:tag' content='Kubernetes'><meta property='article:published_time' content='2024-09-21T00:00:00+00:00'><meta property='article:modified_time' content='2024-09-21T00:00:00+00:00'><meta property='og:image' content='https://amstee.github.io/p/data-lakehouse-architecture-with-flink-sql/lakehouse.jpg'><meta name=twitter:title content="Data Lakehouse Architecture with Flink SQL"><meta name=twitter:description content="In an increasingly data-centric landscape, having a unified data architecture is critical for modern data platforms. We see increasing demand for a flexible, scalable, and cost-effective solution to manage and analyze large volumes of diverse data.\nBut not all architectures were designed to handle this. Traditional data lakes and warehouses often fall short in providing a seamless, efficient solution that can scale and adapt to the needs of businesses, especially in today&rsquo;s challenging economy.\n"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://amstee.github.io/p/data-lakehouse-architecture-with-flink-sql/lakehouse.jpg'><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu4845375560524398799.jpg width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>Jeremy Barneron</a></h1><h2 class=site-description>SWE with strong experience building scalable systems.</h2></div></header><ol class=menu-social><li><a href=https://github.com/amstee target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://www.linkedin.com/in/jeremy-barneron/ target=_blank title=Twitter rel=me><svg height="72" viewBox="0 0 72 72" width="72"><g fill="none" fill-rule="evenodd"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" fill="#007ebb"/><path d="M62 62H51.315625V43.8021149c0-4.9893607-1.8958333-7.7775826-5.8449219-7.7775826-4.2960937.0-6.540625 2.901578-6.540625 7.7775826V62H28.6333333V27.3333333H38.9300781v4.669595s3.0959636-5.7287132 10.452474-5.7287132C56.7356771 26.2742151 62 30.7644705 62 40.051212V62zM16.349349 22.7940133C12.8420573 22.7940133 10 19.9296567 10 16.3970067 10 12.8643566 12.8420573 10 16.349349 10c3.5072916.0 6.3476562 2.8643566 6.3476562 6.3970067.0 3.53265-2.8403646 6.3970066-6.3476562 6.3970066zM11.0325521 62H21.769401V27.3333333H11.0325521V62z" fill="#fff"/></g></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/about-me/><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg>
+<span>About Me</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#data-lakehouse>Data Lakehouse</a><ol><li><a href=#what-is-a-data-lakehouse->What is a Data Lakehouse ?</a></li><li><a href=#what-features-define-a-data-lakehouse->What features define a Data Lakehouse ?</a></li><li><a href=#why-adopt-the-lakehouse-architecture->Why adopt the Lakehouse architecture ?</a></li></ol></li><li><a href=#tech-stack>Tech Stack</a><ol><li><a href=#flink>Flink</a></li><li><a href=#iceberg>Iceberg</a></li><li><a href=#nessie>Nessie</a></li></ol></li><li><a href=#deployment>Deployment</a><ol><li><a href=#nessie-1>Nessie</a><ol><li><a href=#setup>Setup</a></li><li><a href=#deployment-1>Deployment</a></li></ol></li><li><a href=#flink-1>Flink</a><ol><li><a href=#operator-installation>Operator Installation</a></li><li><a href=#docker-image>Docker image</a></li><li><a href=#deploy-our-flink-cluster>Deploy our Flink cluster</a></li></ol></li></ol></li><li><a href=#flink-table-api--sql>Flink Table API & SQL</a><ol><li><a href=#dataset>Dataset</a></li><li><a href=#lets-query-our-source-dataset>Let’s query our Source dataset</a></li><li><a href=#iceberg-table>Iceberg table</a></li></ol></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#coming-next>Coming Next</a></li></ol></nav></div></section></aside><main class="main full-width"><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/p/data-lakehouse-architecture-with-flink-sql/><img src=/p/data-lakehouse-architecture-with-flink-sql/lakehouse_hu3523843293634968166.jpg srcset="/p/data-lakehouse-architecture-with-flink-sql/lakehouse_hu3523843293634968166.jpg 800w, /p/data-lakehouse-architecture-with-flink-sql/lakehouse_hu7910180558332147858.jpg 1600w" width=800 height=447 loading=lazy alt="Featured image of post Data Lakehouse Architecture with Flink SQL"></a></div><div class=article-details><header class=article-category><a href=/categories/flink/ style=background-color:orange;color:#fff>Flink
+</a><a href=/categories/kubernetes/ style=background-color:#2a0d8f;color:#fff>Kubernetes
+</a><a href=/categories/iceberg/>Iceberg</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/data-lakehouse-architecture-with-flink-sql/>Data Lakehouse Architecture with Flink SQL</a></h2></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Sep 21, 2024</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>12 minute read</time></div></footer></div></header><section class=article-content><p>In an increasingly data-centric landscape, having a unified data architecture is critical for modern data platforms. We see increasing demand for a flexible, scalable, and cost-effective solution to manage and analyze large volumes of diverse data.</p><p>But not all architectures were designed to handle this. Traditional data lakes and warehouses often fall short in providing a seamless, efficient solution that can scale and adapt to the needs of businesses, especially in today&rsquo;s challenging economy.</p><p>How do you bridge the gap between them, and evolve your architecture into something more dynamic and future proof ?</p><p><strong>Introducing &ndash; The Data Lakehouse Architecture</strong></p><h2 id=data-lakehouse>Data Lakehouse</h2><h3 id=what-is-a-data-lakehouse->What is a Data Lakehouse ?</h3><p>A data lakehouse is a modern data architecture that creates a single platform by combining the key benefits of data lakes (large repositories of raw data in its original form) and data warehouses (organized sets of structured data). Specifically, data lakehouses enable organizations to use low-cost storage to store large amounts of raw data while providing structure and data management functions.</p><p><img src=/p/data-lakehouse-architecture-with-flink-sql/lakehouse.drawio.png width=2254 height=872 srcset="/p/data-lakehouse-architecture-with-flink-sql/lakehouse.drawio_hu17641564343896000699.png 480w, /p/data-lakehouse-architecture-with-flink-sql/lakehouse.drawio_hu14694912769483287999.png 1024w" loading=lazy alt="Lakehouse Overview" class=gallery-image data-flex-grow=258 data-flex-basis=620px></p><h3 id=what-features-define-a-data-lakehouse->What features define a Data Lakehouse ?</h3><p>The key data lakehouse features include:</p><ul><li><strong>Many data types, Low-cost storage</strong> for all data types (structured, unstructured, and semi-structured)</li><li><strong>Data management features</strong> to apply schema, enforce data governance, and provide ETL processes and data cleansing</li><li><strong>Transaction support</strong> for ACID (atomicity, consistency, isolation, and durability) properties to ensure data consistency when multiple users concurrently read and write data</li><li><strong>Standardized storage formats</strong> that can be used in multiple software programs</li><li><strong>End-to-end streaming</strong> to support real-time ingestion of data and insight generation</li><li><strong>Separate compute and storage resources</strong> to ensure scalability for a diverse set of workloads</li><li><strong>Direct access for BI apps</strong> to the source data in the lakehouse to reduce data duplication.</li></ul><h3 id=why-adopt-the-lakehouse-architecture->Why adopt the Lakehouse architecture ?</h3><p>The trend towards Lakehouse architectures in data management is driven by several key factors:</p><ul><li><strong>Data variety</strong>: Companies now deal with structured, semi-structured, and unstructured data. Lakehouses can handle all these data types efficiently.</li><li><strong>Cost-effectiveness</strong>: Lakehouses combine the low-cost storage of data lakes with the powerful querying capabilities of data warehouses, offering a more economical solution.</li><li><strong>Data silos elimination</strong>: Lakehouses help break down data silos by providing a unified platform for all data types and analytics workloads.</li><li><strong>Real-time analytics</strong>: Lakehouse architectures support both batch and real-time data processing, enabling faster insights.</li><li><strong>Machine learning integration</strong>: Lakehouses provide strong support for machine learning workflows, allowing data scientists to work directly with raw data.</li><li><strong>Data governance</strong>: Lakehouses offer improved data governance and security features compared to traditional data lakes.</li><li><strong>Scalability</strong>: Lakehouse architectures can scale easily to accommodate growing data volumes and diverse analytical needs.</li><li><strong>Flexibility</strong>: They allow companies to use a variety of tools and technologies for data processing and analysis.</li></ul><p>If you feel a bit overwhelmed at this point, don’t worry, getting started is a lot easier than you might think ✅</p><h2 id=tech-stack>Tech Stack</h2><p>Let&rsquo;s introduce the stars of our show: <strong>Flink, Iceberg & Nessie</strong></p><h3 id=flink>Flink</h3><blockquote><p><strong>Stateful Computations over Data Streams</strong></p><p>Apache Flink is a framework and distributed processing engine for stateful computations over unbounded and bounded data streams. Flink has been designed to run in all common cluster environments, perform computations at in-memory speed and at any scale.</p><p>Source: <a class=link href=https://flink.apache.org/ target=_blank rel=noopener>https://flink.apache.org/</a></p></blockquote><p>What you need to know:</p><ul><li>Flink is incredibly easy to get started with it. Deploying, managing and scaling your own Flink deployments through it’s k8s operator is a breeze.</li><li>Flink by design is easy to extend, it feels a lot like Kafka Connect for example. Writing new formats or connectors is a well documented process. Nowadays, Flink can support pretty much any source, sink or format you might need.</li><li>Flink allows you to turn pretty much any source of data into a stream. Transformating a batch job picking up files from an S3 or GCS buckets into a streaming query that will monitor said bucket for changes can be as simple as adding one argument to your table (ex: <code>source.monitor-interval</code>).</li><li>Flink integrates nicely with most Data Catalogs, an essential piece in building our modern data lakehouse architecture.</li></ul><h3 id=iceberg>Iceberg</h3><blockquote><p>Iceberg is a high-performance format for huge analytic tables. Iceberg brings the reliability and simplicity of SQL tables to big data, while making it possible for engines like Spark, Trino, Flink, Presto, Hive and Impala to safely work with the same tables, at the same time.</p><p>Source: <a class=link href=https://iceberg.apache.org/ target=_blank rel=noopener>https://iceberg.apache.org/</a></p></blockquote><p>I think this one is pretty self explanatory, in order to build our Data Lakehouse, we need a format that makes it possible to implement its properties, remember ACID transactions, Data management features (Schemas, Compaction …)</p><p>Here are the main features of Iceberg:</p><ul><li>Expressive SQL: Iceberg supports flexible SQL commands to merge new data, update existing rows, and perform targeted deletes. Iceberg can eagerly rewrite data files for read performance, or it can use delete deltas for faster updates.</li><li>Schema Evolution: Schema evolution just works. Adding a column won&rsquo;t bring back &ldquo;zombie&rdquo; data. Columns can be renamed and reordered. Best of all, schema changes never require rewriting your table.</li><li>Partition management: Iceberg handles the tedious and error-prone task of producing partition values for rows in a table and skips unnecessary partitions and files automatically. No extra filters are needed for fast queries, and table layout can be updated as data or queries change.</li><li>Time Travel and Rollback: Time-travel enables reproducible queries that use exactly the same table snapshot, or lets users easily examine changes. Version rollback allows users to quickly correct problems by resetting tables to a good state.</li><li>Data Compaction: Data compaction is supported out-of-the-box and you can choose from different rewrite strategies such as bin-packing or sorting to optimize file layout and size.</li></ul><h3 id=nessie>Nessie</h3><blockquote><p>Nessie is an OSS service and libraries that enable you to maintain multiple versions of your data and leverage Git-like Branches & Tags for your Data Lake. Nessie enhances the Apache Iceberg table format with version control techniques!</p></blockquote><p>In order to start building our Data Lakehouse using Iceberg, we need a Data Catalog to help us keep track of our Iceberg Tables, their versions …</p><p>Nessie is heavily inspired by Git. The main concepts Nessie exposes map directly to <a class=link href=https://git-scm.com/book/en/v2 target=_blank rel=noopener>Git concepts</a>. In most cases, you simply need to replace references of files and directories in Git with Tables in Nessie. The primary concepts in Nessie are:</p><ul><li>Commit: Consistent snapshot of all tables at a particular point in time.</li><li>Branch: Human-friendly reference that a user can add commits to.</li><li>Tag: Human-friendly reference that points to a particular commit.</li><li>Hash: Hexadecimal string representation of a particular commit.</li></ul><p>I’m sure most of you are familiar with Git, and you know it is today the de-facto standard for version control. Having similar features on top of our Data lakehouse is incredibly powerful.</p><h2 id=deployment>Deployment</h2><p><strong>Pre-requisites:</strong></p><ul><li>Kubernetes Cluster <a class=link href="https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download" target=_blank rel=noopener>(ex: Minikube)</a></li><li>Helm</li><li>GCS bucket & GCP SA credentials<ul><li>As I struggled a bit to find a simple guide showing how to integrate Flink, Nessie & GCS, I felt like it would be valuable to show how to do so here</li></ul></li></ul><p>Now let’s get started:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kubectl create ns flink-lakehouse <span class=o>&amp;&amp;</span> kubectl config set-context --current --namespace<span class=o>=</span>flink-lakehouse
+</span></span></code></pre></td></tr></table></div></div><h3 id=nessie-1>Nessie</h3><h4 id=setup>Setup</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>helm repo add nessie-helm https://charts.projectnessie.org
+</span></span><span class=line><span class=cl>helm repo update
+</span></span></code></pre></td></tr></table></div></div><h4 id=deployment-1>Deployment</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>helm install nessie -n flink-lakehouse helm/nessie
+</span></span></code></pre></td></tr></table></div></div><h3 id=flink-1>Flink</h3><h4 id=operator-installation>Operator Installation</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-jsx data-lang=jsx><span class=line><span class=cl><span class=nx>helm</span> <span class=nx>repo</span> <span class=nx>add</span> <span class=nx>flink</span><span class=o>-</span><span class=nx>operator</span><span class=o>-</span><span class=nx>repo</span> <span class=nx>https</span><span class=o>:</span><span class=c1>//downloads.apache.org/flink/flink-kubernetes-operator-&lt;OPERATOR-VERSION&gt;/
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>helm</span> <span class=nx>install</span> <span class=nx>flink</span><span class=o>-</span><span class=nx>kubernetes</span><span class=o>-</span><span class=nx>operator</span> <span class=nx>flink</span><span class=o>-</span><span class=nx>operator</span><span class=o>-</span><span class=nx>repo</span><span class=o>/</span><span class=nx>flink</span><span class=o>-</span><span class=nx>kubernetes</span><span class=o>-</span><span class=nx>operator</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=docker-image>Docker image</h4><p>As I said earlier Flink is designed to be extended, and this is done by making the required JAR available to Flink.</p><p>Steps:</p><details><summary>JARs</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>mkdir jars
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>Now download and add the following JARs to our folder:</p><ul><li><a class=link href=https://mvnrepository.com/artifact/org.apache.flink/flink-sql-parquet/1.17.2 target=_blank rel=noopener>flink-sql-parquet-1.17.2.jar</a> (We will be querying raw parquet files for our example)</li><li><a class=link href=https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-gcp-bundle/1.5.2 target=_blank rel=noopener>iceberg-gcp-bundle-1.5.2.jar</a> (Iceberg + GCS)</li><li><a class=link href=https://repo.maven.apache.org/maven2/org/apache/iceberg/iceberg-flink-runtime-1.17/1.5.2/ target=_blank rel=noopener>iceberg-flink-runtime-1.17-1.5.2.jar</a> (Iceberg + Flink)</li></ul></blockquote></details><details><summary>flink-hadoop-entrypoint.sh</summary><p>This make sure our hadoop classpath is well defined: <code>flink-hadoop-entrypoint.sh</code></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=cp>#!/usr/bin/env bash
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1># Note: hadoop_home is set in docker image</span>
+</span></span><span class=line><span class=cl><span class=nb>export</span> <span class=nv>HADOOP_CLASSPATH</span><span class=o>=</span><span class=s2>&#34;</span><span class=k>$(</span>hadoop classpath<span class=k>)</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>/docker-entrypoint.sh
+</span></span></code></pre></td></tr></table></div></div></details><details><summary>Dockerfile</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-docker data-lang=docker><span class=line><span class=cl><span class=c># Scala is needed for iceberg runtime</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>FROM</span><span class=s> flink:1.17.2-scala_2.12-java11</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; HADOOP &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ARG</span> <span class=nv>hadoop_version</span><span class=o>=</span><span class=s2>&#34;3.3.5&#34;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ARG</span> <span class=nv>hadoop_arch</span><span class=o>=</span><span class=s2>&#34;&#34;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> HADOOP_HOME /opt/hadoop/hadoop-<span class=nv>$hadoop_version</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=s> /opt/hadoop</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Install hadoop</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># See https://hadoop.apache.org/releases.html</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># download the release hadoop-X.Y.Z-src.tar.gz from a mirror site.</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  wget https://dlcdn.apache.org/hadoop/common/hadoop-<span class=nv>$hadoop_version</span>/hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># download the signature file hadoop-X.Y.Z-src.tar.gz.asc from Apache.</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  wget https://downloads.apache.org/hadoop/common/hadoop-<span class=nv>$hadoop_version</span>/hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz.asc <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># download the Hadoop KEYS file.</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  wget https://downloads.apache.org/hadoop/common/KEYS <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># verify the download</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  gpg --import ./KEYS <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  gpg --verify hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz.asc hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># Unarchive</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  tar -xzf hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=c1># Cleanup</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  rm hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  rm hadoop-<span class=nv>$hadoop_version$hadoop_arch</span>.tar.gz.asc <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  rm KEYS<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span>  <span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Set JAVA_HOME in hadoop-env.sh, update path, etc.</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=nb>echo</span> <span class=s2>&#34;export JAVA_HOME=</span><span class=nv>$JAVA_HOME</span><span class=s2>&#34;</span> &gt;&gt; <span class=nv>$HADOOP_HOME</span>/etc/hadoop/hadoop-env.sh <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  <span class=nb>echo</span> <span class=s2>&#34;PATH=</span><span class=nv>$PATH</span><span class=s2>:</span><span class=nv>$HADOOP_HOME</span><span class=s2>/bin&#34;</span> &gt;&gt; ~/.bashrc<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> <span class=nv>PATH</span><span class=o>=</span><span class=nv>$HADOOP_HOME</span>/bin:<span class=nv>$PATH</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENV</span> HADOOP_CONF_DIR <span class=nv>$HADOOP_HOME</span>/etc/hadoop<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; HADOOP &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>WORKDIR</span><span class=s> $FLINK_HOME</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Google Cloud Storage plugin</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>RUN</span> mkdir /opt/flink/plugins/gs-fs-hadoop <span class=o>&amp;&amp;</span> cp /opt/flink/opt/flink-gs-fs-hadoop-*.jar /opt/flink/plugins/gs-fs-hadoop/<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># Copy jars in this github repo to the flink lib directory</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># * Flink SQL Parquet</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=c># * Flink iceberg runtime</span><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> ./jars/ /opt/flink/lib/<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>COPY</span> ./entrypoint/flink-hadoop-entrypoint.sh /flink-hadoop-entrypoint.sh<span class=err>
+</span></span></span><span class=line><span class=cl><span class=err></span><span class=k>ENTRYPOINT</span> <span class=p>[</span><span class=s2>&#34;/flink-hadoop-entrypoint.sh&#34;</span><span class=p>]</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div></details><h4 id=deploy-our-flink-cluster>Deploy our Flink cluster</h4><details><summary>gcp-credentials.yaml</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>Secret</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>data</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>gcp-creds</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;${b64encode(GCP_SA_JSON_KEY})}&#34;</span><span class=w> </span><span class=c># Replace this</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></details><details><summary>catalog.yaml</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>ConfigMap</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>flink-catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>data</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=c># Don&#39;t forget to replace with your GCS bucket path</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>nessie.yaml</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>    ref: &#34;main&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>    type: &#34;iceberg&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>    warehouse: &#34;gs://${YOUR_GCS_BUCKET}/&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>    catalog-impl: &#34;org.apache.iceberg.nessie.NessieCatalog&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>    uri: &#34;http://nessie.nessie-ns:19120/api/v1&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>    io-impl: &#34;org.apache.iceberg.gcp.gcs.GCSFileIO&#34;</span><span class=w>    
+</span></span></span></code></pre></td></tr></table></div></div></details><details><summary>flink-deployment.yaml</summary><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>apiVersion</span><span class=p>:</span><span class=w> </span><span class=l>flink.apache.org/v1beta1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>kind</span><span class=p>:</span><span class=w> </span><span class=l>FlinkDeployment</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>metadata</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>dsp-flink</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>${OUR_FLINK_DOCKER_IMAGE}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>flinkVersion</span><span class=p>:</span><span class=w> </span><span class=l>v1_17</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mode</span><span class=p>:</span><span class=w> </span><span class=l>standalone</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>flinkConfiguration</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>taskmanager.numberOfTaskSlots</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>table.catalog-store.kind</span><span class=p>:</span><span class=w> </span><span class=l>file</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>table.catalog-store.file.path</span><span class=p>:</span><span class=w> </span><span class=l>./catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>serviceAccount</span><span class=p>:</span><span class=w> </span><span class=l>flink</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>jobManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>resource</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1024m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>podTemplate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>flink-main-container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>GOOGLE_APPLICATION_CREDENTIALS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>value</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/secrets/gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>volumeMounts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>mountPath</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/secrets</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>mountPath</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>secret</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>secretName</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>configMap</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>flink-catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>taskManager</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>resource</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>memory</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;1024m&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>cpu</span><span class=p>:</span><span class=w> </span><span class=m>1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>podTemplate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>spec</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>containers</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>flink-main-container</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>GOOGLE_APPLICATION_CREDENTIALS</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>value</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/secrets/gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>volumeMounts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>mountPath</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/secrets</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>mountPath</span><span class=p>:</span><span class=w> </span><span class=l>/opt/flink/catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>secret</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>secretName</span><span class=p>:</span><span class=w> </span><span class=l>gcp-creds</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>catalogs</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=nt>configMap</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>flink-catalogs</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div></details><h2 id=flink-table-api--sql>Flink Table API & SQL</h2><p>Apache Flink features two relational APIs - the Table API and SQL.</p><p>The Table API is a language-integrated query API for Java, Scala, and Python that allows the composition of queries from relational operators such as selection, filter, and join in a very intuitive way.</p><p>Flink’s SQL support is based on <a class=link href=https://calcite.apache.org/ target=_blank rel=noopener>Apache Calcite</a> which implements the SQL standard. Queries specified in either interface have the same semantics and specify the same result regardless of whether the input is continuous (streaming) or bounded (batch).</p><p>Let’s try this out, first we need some data:</p><h3 id=dataset>Dataset</h3><p>Let’s use <a class=link href=https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page target=_blank rel=noopener>New York’s taxi trip data</a></p><p>Download one of those files and add it to your GCS bucket in a <code>nyc/</code> folder.</p><h3 id=lets-query-our-source-dataset>Let’s query our Source dataset</h3><p><strong>1. Flink SQL client</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kubectl <span class=nb>exec</span> -it deployment/dsp-flink ./bin/sql-client.sh
+</span></span></code></pre></td></tr></table></div></div><p><strong>2. Let’s configure our SQL environment:</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>SET</span><span class=w> </span><span class=s1>&#39;sql-client.execution.result-mode&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;tableau&#39;</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><strong>3. Let’s create a new table:</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>TaxiTrips</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>VendorID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>tpep_pickup_datetime</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>tpep_dropoff_datetime</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>passenger_count</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>trip_distance</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>RatecodeID</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>store_and_fwd_flag</span><span class=w> </span><span class=n>STRING</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>PULocationID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>DOLocationID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>payment_type</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>fare_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>extra</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>mta_tax</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>tip_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>tolls_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>improvement_surcharge</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>total_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>congestion_surcharge</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Airport_fee</span><span class=w> </span><span class=n>DOUBLE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>)</span><span class=w> </span><span class=k>WITH</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s1>&#39;connector&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;filesystem&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s1>&#39;path&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;gs://${YOUR_GCS_BUCKET}/nyc/&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s1>&#39;format&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;parquet&#39;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=s1>&#39;source.monitor-interval&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;1m&#39;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><blockquote><p>This configuration setting <code>'source.monitor-interval' = '1m'</code> tells Flink to periodically check the specified source location (in this case, the GCS bucket) for new or modified files. The &lsquo;1m&rsquo; value means it will perform this check every 1 minute.</p></blockquote><p><strong>4. Validate it works</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>SELECT</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>FROM</span><span class=w> </span><span class=n>NycDataset</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=iceberg-table>Iceberg table</h3><p>Now let’s convert our NycDataset in the desired Lakehouse format:</p><p><strong>1. Use our Iceberg Catalog: Nessie</strong></p><p>Remember, we defined this catalog as part of our Flink deployment</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=n>USE</span><span class=w> </span><span class=k>CATALOG</span><span class=w> </span><span class=n>nessie</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>CREATE</span><span class=w> </span><span class=k>database</span><span class=w> </span><span class=n>nycdataset</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><strong>2. Create our Iceberg Table</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>nycdataset</span><span class=p>.</span><span class=n>TaxiTrips</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>VendorID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>tpep_pickup_datetime</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>tpep_dropoff_datetime</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>passenger_count</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>trip_distance</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>RatecodeID</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>store_and_fwd_flag</span><span class=w> </span><span class=n>STRING</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>PULocationID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>DOLocationID</span><span class=w> </span><span class=nb>INT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>payment_type</span><span class=w> </span><span class=nb>BIGINT</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>fare_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>extra</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>mta_tax</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>tip_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>tolls_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>improvement_surcharge</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>total_amount</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>congestion_surcharge</span><span class=w> </span><span class=n>DOUBLE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>Airport_fee</span><span class=w> </span><span class=n>DOUBLE</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><strong>3. Move our data</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>nycdataset</span><span class=p>.</span><span class=n>TaxiTrips</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>SELECT</span><span class=w> </span><span class=o>*</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>FROM</span><span class=w> </span><span class=n>default_catalog</span><span class=p>.</span><span class=n>default_database</span><span class=p>.</span><span class=n>TaxiTrips</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p><strong>4. Query our Data Lakehouse</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>SET</span><span class=w> </span><span class=s1>&#39;sql-client.execution.result-mode&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;tableau&#39;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>SET</span><span class=w> </span><span class=s1>&#39;execution.runtime-mode&#39;</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s1>&#39;batch&#39;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>select</span><span class=w> </span><span class=o>*</span><span class=w> </span><span class=k>FROM</span><span class=w> </span><span class=n>nessie</span><span class=p>.</span><span class=n>nycdataset</span><span class=p>.</span><span class=n>TaxiTrips</span><span class=w> </span><span class=k>LIMIT</span><span class=w> </span><span class=mi>10</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>select</span><span class=w> </span><span class=k>count</span><span class=p>(</span><span class=o>*</span><span class=p>)</span><span class=w> </span><span class=k>FROM</span><span class=w> </span><span class=n>nessie</span><span class=p>.</span><span class=n>nycdataset</span><span class=p>.</span><span class=n>TaxiTrips</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><blockquote><p>This fact that our source table is unbouded effectively creates a pipeline that keeps your Iceberg table up-to-date with the latest data from your raw files, enabling near real-time data availability in your Data Lakehouse. It&rsquo;s a powerful feature that bridges the gap between batch and stream processing, allowing for fresher data in your analytics and downstream applications.</p></blockquote><h2 id=conclusion>Conclusion</h2><p>With Apache Flink&rsquo;s powerful connector capabilities, Apache Iceberg&rsquo;s high-performance table format, and Nessie&rsquo;s version control features, we&rsquo;ve created a robust foundation for a Data Lakehouse.
+The lakehouse architecture combines the best of data lakes and data warehouses, offering a flexible, scalable, and cost-effective solution for managing and analyzing large volumes of diverse data.</p><p>With a few minutes, we&rsquo;ve layed foundation do an architecture that will scale as data volumes continue to grow and analytical needs become more complex.</p><h2 id=coming-next>Coming Next</h2><ul><li>Proto Confluent format for Flink</li><li>BigQuery &ldquo;CDC&rdquo; with Flink</li><li>Flink HTTP Source connector</li></ul></section><footer class=article-footer><section class=article-tags><a href=/tags/lakehouse/>Lakehouse</a>
+<a href=/tags/flink/>Flink</a>
+<a href=/tags/iceberg/>Iceberg</a>
+<a href=/tags/kubernetes/>Kubernetes</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><footer class=site-footer><section class=copyright>&copy;
+2024 Jeremy Barneron</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.27.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
