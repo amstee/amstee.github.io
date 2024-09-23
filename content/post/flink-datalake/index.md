@@ -34,7 +34,7 @@ A data lakehouse is a modern data architecture that creates a single platform by
 
 The key data lakehouse features include:
 
-- **Single data low-cost data store** for all data types (structured, unstructured, and semi-structured)
+- **Many data types, Low-cost storage** for all data types (structured, unstructured, and semi-structured)
 - **Data management features** to apply schema, enforce data governance, and provide ETL processes and data cleansing
 - **Transaction support** for ACID (atomicity, consistency, isolation, and durability) properties to ensure data consistency when multiple users concurrently read and write data
 - **Standardized storage formats** that can be used in multiple software programs
